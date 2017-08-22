@@ -1,2 +1,2 @@
-# digital_10band_eq
-An implementation of a 10-band digital audio equalizer
+# Digital multi-band Audio EQ
+An implementation of a multi-band digital audio equalizer
