@@ -29,7 +29,6 @@ def main():
 
   for sample in audio_input:
     audio_output[idx] = eq.process_sample(sample)
-#    audio_output[idx] = eq.process_sample(sample) / 4
     idx += 1
 
   WriteWav('noise.wav', FS, audio_input)
