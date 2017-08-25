@@ -13,15 +13,13 @@ class digitalEq:
     # input sampling frequency
     self.f_s = f_s
     # history of signal input and output
-    self.x_n_1, self.x_n_2, self.y_n_1, self.y_n_2 = 0, 0, 0, 0
+    self.x_n_1, self.x_n_2, self.y_n, self.y_n_1, self.y_n_2 = 0, 0, None, None, None
     # size of band filter bank
     self.eq_size = 0
     # filter parameters
-    self.array_f_0 = None
-    self.array_Q = None
-    self.list_beta = []
-    self.list_lambd = []
-    self.list_alpha = []
+    self.array_f_0, self.array_Q = None, None
+    self.array_beta, self.array_lambd, self.array_alpha = None, None, None
+
 
   def init_eq(self, array_f_0, array_Q):
 
@@ -30,33 +28,28 @@ class digitalEq:
       return
 
     self.eq_size = len(array_f_0)
-    self.array_f_0 = array_f_0
-    self.array_Q = array_Q
+    self.array_f_0 = np.array(array_f_0)
+    self.array_Q = np.array(array_Q)
+    self.y_n = np.zeros(self.eq_size)
+    self.y_n_1 = np.zeros(self.eq_size)
+    self.y_n_2 = np.zeros(self.eq_size)
 
-    for f_0, Q in zip(array_f_0, array_Q):
-      theta_0 = 2*Pi*(f_0/self.f_s)
-      beta = .5 * ( 1 - Tan(.5*theta_0/Q) ) / ( 1 + Tan(.5*theta_0/Q) )
-      self.list_beta.append(beta)
-      self.list_lambd.append((.5 + beta) * Cos(theta_0))
-      self.list_alpha.append((.5 - beta)/2)
+    theta_0 = 2*np.pi*(self.array_f_0/self.f_s)
+    self.array_beta = .5 * ( 1 - np.tan(.5*np.divide(theta_0,self.array_Q)) ) / \
+                          ( 1 + np.tan(.5*np.divide(theta_0,self.array_Q)) )
+    self.array_lambd = (.5 + self.array_beta) * np.cos(theta_0)
+    self.array_alpha = (.5 - self.array_beta)/2
 
-    print("beta {}".format(self.list_beta))
-    print("lambd {}".format(self.list_lambd))
-    print("alpha {}".format(self.list_alpha))
 
   def process_sample(self, x_n):
 
-    y_n = 0
-    for beta, lambd, alpha in zip(self.list_beta, self.list_lambd, self.list_alpha):
-      # y(n) = 2 { alpha*[x(n) - x(n-2)] + lambd*y(n-1) - beta*y(n-2) } / equalizer_size
-      y_n += (2*alpha/self.eq_size)*x_n - (2*alpha/self.eq_size)*self.x_n_2 + \
-             (2*lambd/self.eq_size)*self.y_n_1 - (2*beta/self.eq_size)*self.y_n_2
-#      y_n += ( alpha*(x_n - self.x_n_2) + lambd*self.y_n_1 - beta*self.y_n_2 ) * (2/self.eq_size)
+    self.y_n = 2 * (self.array_alpha*(x_n - self.x_n_2) + self.array_lambd*self.y_n_1 - \
+                    self.array_beta*self.y_n_2) / self.eq_size
 
-    # update input history
-    self.x_n_2 = self.x_n_1
-    self.x_n_1 = x_n
-    self.y_n_2 = self.y_n_1
-    self.y_n_1 = y_n
+    # update input and output history
+    self.x_n_2 = np.copy(self.x_n_1)
+    self.x_n_1 = np.copy(x_n)
+    self.y_n_2 = np.copy(self.y_n_1)
+    self.y_n_1 = np.copy(self.y_n)
 
-    return y_n
+    return round(np.sum(self.y_n))
