@@ -3,14 +3,16 @@ from scipy.io.wavfile import read as ReadWav
 from scipy.io.wavfile import write as WriteWav
 
 # Global parameters
-
 F0 = [3000, 15000]
 Q  = [1.4,  1.4]
 
 def main():
 
+  global F0, Q
+
   # read input audio
-  FS, audio_input = ReadWav('../audio_sample_rock.wav')
+  input_filename = 'audio_sample_rock'
+  FS, audio_input = ReadWav('../'+input_filename+'.wav')
   # extract one channel
   audio_input = audio_input[:,0]
   # pre-allocate output
@@ -29,10 +31,13 @@ def main():
 
   for sample in audio_input:
     audio_output[idx] = eq.process_sample(sample)
-#    audio_output[idx] = eq.process_sample(sample) / 4
     idx += 1
 
-  WriteWav('audioclip_' + str(F0) + 'filtered.wav', FS, audio_output)
+  output_filename = input_filename+'_filt'
+  for f0,Q in zip(F0,Q):
+    output_filename += '_f'+str(f0)+'Q'+str(Q)
+  output_filename += '_ref.wav'
+  WriteWav(output_filename, FS, audio_output)
 
 if __name__ == '__main__':
   main()
