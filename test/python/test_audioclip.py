@@ -5,6 +5,7 @@ from scipy.io.wavfile import write as WriteWav
 # Global parameters
 F0 = [3000, 15000]
 Q  = [1.4,  1.4]
+G = [1, 1]
 
 def main():
 
@@ -19,7 +20,9 @@ def main():
   audio_output = np.zeros_like(audio_input)
 
   eq = digitalEq(FS)
-  eq.init_eq(F0, Q)
+  err = eq.init_eq(F0, Q, G)
+  if err:
+    return -1
 
   print("FS {}".format(FS))
   print("F0 {}".format(F0))
@@ -36,7 +39,7 @@ def main():
   output_filename = input_filename+'_filt'
   for f0,Q in zip(F0,Q):
     output_filename += '_f'+str(f0)+'Q'+str(Q)
-  output_filename += '_ref.wav'
+  output_filename += '.wav'
   WriteWav(output_filename, FS, audio_output)
 
 if __name__ == '__main__':

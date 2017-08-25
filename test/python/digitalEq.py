@@ -17,19 +17,25 @@ class digitalEq:
     # size of band filter bank
     self.eq_size = 0
     # filter parameters
-    self.array_f_0, self.array_Q = None, None
+    self.array_f_0, self.array_Q, self.array_G = None, None, None
     self.array_beta, self.array_lambd, self.array_alpha = None, None, None
 
 
-  def init_eq(self, array_f_0, array_Q):
+  def init_eq(self, array_f_0, array_Q, array_G):
 
-    if len(array_f_0) != len(array_Q):
+    if len(array_f_0) != len(array_Q) or len(array_f_0) != len(array_G):
       print('invalid eq bank size')
-      return
+      return -1
 
     self.eq_size = len(array_f_0)
+    for f_0, Q, G in zip(array_f_0, array_Q, array_G):
+      if f_0 > 20000 or f_0 < 20 or Q > 10 or Q < .1 or G > 1 or G < 0:
+        print('invalid filter parameters')
+        return -1
+
     self.array_f_0 = np.array(array_f_0)
     self.array_Q = np.array(array_Q)
+    self.array_G = np.array(array_G)
     self.y_n = np.zeros(self.eq_size)
     self.y_n_1 = np.zeros(self.eq_size)
     self.y_n_2 = np.zeros(self.eq_size)
@@ -39,6 +45,8 @@ class digitalEq:
                           ( 1 + np.tan(.5*np.divide(theta_0,self.array_Q)) )
     self.array_lambd = (.5 + self.array_beta) * np.cos(theta_0)
     self.array_alpha = (.5 - self.array_beta)/2
+
+    return 0
 
 
   def process_sample(self, x_n):
@@ -52,4 +60,4 @@ class digitalEq:
     self.y_n_2 = np.copy(self.y_n_1)
     self.y_n_1 = np.copy(self.y_n)
 
-    return round(np.sum(self.y_n))
+    return round(np.sum(self.array_G * self.y_n))

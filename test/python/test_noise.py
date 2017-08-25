@@ -9,6 +9,7 @@ from scipy.io.wavfile import write as WriteWav
 FS = 44100
 F0 = [1000]
 Q = [1.4]
+G = [1]
 
 def main():
 
@@ -18,7 +19,9 @@ def main():
   audio_output = np.zeros_like(audio_input)
 
   eq = digitalEq(FS)
-  eq.init_eq(F0, Q)
+  err = eq.init_eq(F0, Q, G)
+  if err:
+    return -1
 
   print("FS {}".format(FS))
   print("F0 {}".format(F0))
