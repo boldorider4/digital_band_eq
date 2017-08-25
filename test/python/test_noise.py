@@ -1,7 +1,7 @@
 from math import pi as Pi
 from math import cos as Cos
 from math import tan as Tan
-from digital_eq_prototype import *
+from digitalEq import *
 from scipy.io.wavfile import write as WriteWav
 
 # Global parameters

@@ -1,4 +1,4 @@
-from digital_eq_prototype import *
+from digitalEq import *
 from scipy.io.wavfile import read as ReadWav
 from scipy.io.wavfile import write as WriteWav
 
