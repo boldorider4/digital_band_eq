@@ -12,7 +12,7 @@ def main():
 
   # read input audio
   input_filename = 'audio_sample_rock'
-  FS, audio_input = ReadWav('../'+input_filename+'.wav')
+  FS, audio_input = ReadWav('../audio_samples/'+input_filename+'.wav')
   # extract one channel
   audio_input = audio_input[:,0]
   # pre-allocate output
