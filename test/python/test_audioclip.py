@@ -9,7 +9,7 @@ G = [1, 1]
 
 def main():
 
-  global F0, Q
+  global F0, Q, G
 
   # read input audio
   input_filename = 'audio_sample_rock'

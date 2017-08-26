@@ -13,6 +13,8 @@ G = [1]
 
 def main():
 
+  global FS, F0, Q, G
+
   # read input audio
   audio_input = np.random.randint(-2**14, 2**14, size=96000, dtype='int16')
   # pre-allocate output
