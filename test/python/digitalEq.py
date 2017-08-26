@@ -55,8 +55,8 @@ class digitalEq:
                     self.array_beta*self.y_n_2) / self.eq_size
 
     # update input and output history
-    self.x_n_2 = np.copy(self.x_n_1)
-    self.x_n_1 = np.copy(x_n)
+    self.x_n_2 = self.x_n_1
+    self.x_n_1 = x_n
     self.y_n_2 = np.copy(self.y_n_1)
     self.y_n_1 = np.copy(self.y_n)
 
