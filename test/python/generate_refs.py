@@ -33,7 +33,7 @@ def main():
         print('invalid parameter sizes')
         return -1
 
-      eq = digitalEq(FS, 2)
+      eq = digitalEq(FS, audio_input.shape[1])
       err = eq.init_eq(F0, Q, G)
       if err:
         return -1
@@ -43,7 +43,7 @@ def main():
       print("FS {}".format(FS))
       print("F0 {}".format(F0))
       print("Q {}".format(Q))
-      print("number of channels {}".format(audio_input[0].size))
+      print("number of channels {}".format(audio_input.shape[1]))
       print("type of audio input is {}".format(type(audio_input[0,0])))
       print("audio is {} samples long".format(len(audio_input)))
       print("rms audio input {}".format(np.sqrt(np.mean(audio_input.astype(np.float)**2))))
