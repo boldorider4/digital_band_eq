@@ -4,17 +4,14 @@ from scipy.io.wavfile import write as WriteWav
 
 # Global parameters
 F0_vec = [[1000],
-          [3000, 15000],
-          [100, 10000, 17000],
-          [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]]
+         [100, 10000, 17000],
+         [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]]
 Q_vec  = [[1.4],
-          [1,  2],
-          [.8,  1.9, .3],
-          [1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3]]
+         [.8,  1.9, .3],
+         [1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3]]
 G_vec  = [[.8],
-          [.5, .9],
-          [.6, 1, .9],
-          [.95, .9, .7, .55, .5, .7, .8, .9, .95, .97]]
+         [.6, 1, .9],
+         [.95, .9, .7, .55, .5, .7, .8, .9, .95, .97]]
 FILENAME = ['audio_sample.wav', 'audio_sample_rock.wav', 'audio_sample_beguine.wav']
 
 def main():
@@ -24,22 +21,20 @@ def main():
   for input_filename in FILENAME:
     # read input audio
     FS, audio_input = ReadWav('../audio_samples/'+input_filename)
-    # extract channels
-    audio_input_ch0, audio_input_ch1 = audio_input[:,0], audio_input[:,1]
     # pre-allocate output
     audio_output = np.zeros_like(audio_input)
 
     if len(F0_vec) != len(Q_vec) or len(F0_vec) != len(G_vec):
-      print('invalid global parameter sizes')
+      print('invalid size of global array of parameter')
       return -1
 
     for F0, Q, G in zip(F0_vec, Q_vec, G_vec):
-      eq_ch0 = digitalEq(FS)
-      eq_ch1 = digitalEq(FS)
-      err = eq_ch0.init_eq(F0, Q, G)
-      if err:
+      if len(F0) != len(Q) or len(F0) != len(G):
+        print('invalid parameter sizes')
         return -1
-      err = eq_ch1.init_eq(F0, Q, G)
+
+      eq = digitalEq(FS, 2)
+      err = eq.init_eq(F0, Q, G)
       if err:
         return -1
 
@@ -49,14 +44,13 @@ def main():
       print("F0 {}".format(F0))
       print("Q {}".format(Q))
       print("number of channels {}".format(audio_input[0].size))
-      print("type of audio input is {}".format(type(audio_input[0])))
+      print("type of audio input is {}".format(type(audio_input[0,0])))
       print("audio is {} samples long".format(len(audio_input)))
       print("rms audio input {}".format(np.sqrt(np.mean(audio_input.astype(np.float)**2))))
       idx = 0
 
-      for sample_ch0, sample_ch1 in zip(audio_input_ch0, audio_input_ch1):
-        audio_output[idx, 0] = eq_ch0.process_sample(sample_ch0)
-        audio_output[idx, 1] = eq_ch1.process_sample(sample_ch1)
+      for sample in audio_input:
+        audio_output[idx] = eq.process_sample(sample)
         idx += 1
 
       output_filename = input_filename+'_filt'

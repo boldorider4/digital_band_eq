@@ -20,7 +20,7 @@ def main():
   # pre-allocate output
   audio_output = np.zeros_like(audio_input)
 
-  eq = digitalEq(FS)
+  eq = digitalEq(FS, 1)
   err = eq.init_eq(F0, Q, G)
   if err:
     return -1
