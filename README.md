@@ -34,7 +34,7 @@ Each coefficient can be estimated as follows:
 
 ![Second order filter coefficients][second_order_coefficients]
 
-where *Q = f_0/(f_2/f_1)* and *theta_0 = 2\*pi\*(f_0/f_s)*. *f_0* is the center frequency of the band-pass filter and
+where *Q = f_0/(f_2 - f_1)* and *theta_0 = 2\*pi\*(f_0/f_s)*. *f_0* is the center frequency of the band-pass filter and
 *f_s* is the sampling frequency of the input signal. *f_1* and *f_2* identify the *stop-band* of the band-pass filter
 where the response gain crosses -3 dB (also corresponding to the half-power point).
 
@@ -56,3 +56,7 @@ audio clips with various EQ configurations. By running
 python generate_refs.py
 
 one can obtain reference *wav files* that can be used to test the conformance of a C++ implementation of the equalizer.
+
+### External references ###
+
+[Quality factors](http://www.learningaboutelectronics.com/Articles/Quality-factor-calculator.php)
